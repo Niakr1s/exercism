@@ -14,6 +14,7 @@ const Exercism = struct {
 const exercisms = [_]Exercism{
     Exercism{ .name = "collatz-conjecture" },
     Exercism{ .name = "leap" },
+    Exercism{ .name = "difference-of-squares" },
 };
 
 pub fn build(b: *std.Build) void {
