@@ -5,6 +5,10 @@ const std = @import("std");
 const Exercism = struct {
     /// Stem of file name, which should be equal directory name.
     name: []const u8,
+
+    fn getRootSourceFile(comptime self: Exercism) []const u8 {
+        return "exercisms/" ++ self.name ++ "/" ++ self.name ++ ".zig";
+    }
 };
 
 const exercisms = [_]Exercism{
@@ -18,7 +22,7 @@ pub fn build(b: *std.Build) void {
     const test_step = b.step("test", "Run tests");
     inline for (exercisms) |e| {
         const t = b.addTest(.{
-            .root_source_file = .{ .path = "exercisms/" ++ e.name ++ "/" ++ e.name ++ ".zig" },
+            .root_source_file = .{ .path = e.getRootSourceFile() },
             .target = target,
             .optimize = optimize,
         });
