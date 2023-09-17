@@ -23,8 +23,8 @@ pub fn build(b: *std.Build) void {
     const optimize = b.standardOptimizeOption(.{});
 
     const test_step = b.step("test", "Run tests");
-    inline for (exercisms) |e| {
-        std.debug.print("added exercism {s}\n", .{e.name});
+    inline for (exercisms, 1..) |e, i| {
+        std.debug.print("[{d:3}] added exercism '{s}'\n", .{ i, e.name });
         const t = b.addTest(.{
             .root_source_file = .{ .path = e.getRootSourceFile() },
             .target = target,
