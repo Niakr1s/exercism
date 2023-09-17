@@ -9,8 +9,7 @@
             "type": "lldb",
             "request": "launch",
             "program": "${workspaceRoot}/zig-out/debug/test",
-            "cwd": "${workspaceRoot}",
-            "preLaunchTask": "zig build test",
+            "cwd": "${workspaceRoot}"
         }
     ]
 }
