@@ -23,6 +23,7 @@ pub fn build(b: *std.Build) void {
 
     const test_step = b.step("test", "Run tests");
     inline for (exercisms) |e| {
+        std.debug.print("added exercism {s}\n", .{e.name});
         const t = b.addTest(.{
             .root_source_file = .{ .path = e.getRootSourceFile() },
             .target = target,
