@@ -16,6 +16,7 @@ const exercisms = [_]Exercism{
     Exercism{ .name = "leap" },
     Exercism{ .name = "difference-of-squares" },
     Exercism{ .name = "scrabble-score" },
+    Exercism{ .name = "pangram" },
 };
 
 pub fn build(b: *std.Build) void {
