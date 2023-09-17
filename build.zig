@@ -19,6 +19,7 @@ const exercisms = [_]Exercism{
     Exercism{ .name = "pangram" },
     Exercism{ .name = "armstrong-numbers" },
     Exercism{ .name = "isogram" },
+    Exercism{ .name = "hamming" },
 };
 
 pub fn build(b: *std.Build) void {
