@@ -18,7 +18,7 @@ pub fn build(b: *std.Build) void {
     const test_step = b.step("test", "Run tests");
     inline for (exercisms) |e| {
         const t = b.addTest(.{
-            .root_source_file = .{ .path = "src/" ++ e.name ++ "/" ++ e.name ++ ".zig" },
+            .root_source_file = .{ .path = "exercisms/" ++ e.name ++ "/" ++ e.name ++ ".zig" },
             .target = target,
             .optimize = optimize,
         });
