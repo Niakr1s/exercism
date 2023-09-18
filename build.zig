@@ -38,6 +38,21 @@ pub fn build(b: *std.Build) void {
         const t_run = b.addRunArtifact(t);
         test_step.dependOn(&t_run.step);
     }
+
+    addNewExercismExe(b);
+}
+
+fn addNewExercismExe(b: *std.Build) void {
+    const exe = b.addExecutable(.{
+        .name = "new-exercism",
+        .root_source_file = .{ .path = "cmd/new-exercism/new-exercism.zig" },
+    });
+    b.installArtifact(exe);
+    const run = b.addRunArtifact(exe);
+    if (b.args != null) run.addArgs(b.args.?);
+
+    const step = b.step("new-exercism", "Add new exercism");
+    step.dependOn(&run.step);
 }
 
 /// Makes slice with capacity, enough to hold all items in iterator.
