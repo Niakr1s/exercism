@@ -23,29 +23,41 @@ const exercisms = blk: {
     break :blk buf;
 };
 
-pub fn build(b: *std.Build) void {
-    const target = b.standardTargetOptions(.{});
-    const optimize = b.standardOptimizeOption(.{});
+const BuildOptions = struct {
+    target: std.zig.CrossTarget,
+    optimize: std.builtin.Mode,
+};
 
+pub fn build(b: *std.Build) void {
+    const build_options = BuildOptions{
+        .target = b.standardTargetOptions(.{}),
+        .optimize = b.standardOptimizeOption(.{}),
+    };
+
+    addTests(b, build_options);
+    addNewExercismExe(b, build_options);
+}
+
+fn addTests(b: *std.Build, build_options: BuildOptions) void {
     const test_step = b.step("test", "Run tests");
     inline for (exercisms, 1..) |e, i| {
         std.debug.print("[{d:3}] added exercism '{s}'\n", .{ i, e.name });
         const t = b.addTest(.{
             .root_source_file = .{ .path = e.getRootSourceFile() },
-            .target = target,
-            .optimize = optimize,
+            .target = build_options.target,
+            .optimize = build_options.optimize,
         });
         const t_run = b.addRunArtifact(t);
         test_step.dependOn(&t_run.step);
     }
-
-    addNewExercismExe(b);
 }
 
-fn addNewExercismExe(b: *std.Build) void {
+fn addNewExercismExe(b: *std.Build, build_options: BuildOptions) void {
     const exe = b.addExecutable(.{
         .name = "new-exercism",
         .root_source_file = .{ .path = "cmd/new-exercism/new-exercism.zig" },
+        .target = build_options.target,
+        .optimize = build_options.optimize,
     });
     b.installArtifact(exe);
     const run = b.addRunArtifact(exe);
