@@ -11,16 +11,21 @@ const Exercism = struct {
     }
 };
 
-const exercism_names = @embedFile("exercisms/exercisms.txt");
-
-const exercisms = blk: {
-    var tokens = std.mem.tokenizeAny(u8, exercism_names, "\n");
-    var buf = sliceFromIter(Exercism, &tokens);
-    var i: usize = 0;
-    inline while (tokens.next()) |token| : (i += 1) {
-        buf[i] = Exercism{ .name = token };
-    }
-    break :blk buf;
+const exercisms = [_]Exercism{
+    Exercism{ .name = "collatz-conjecture" },
+    Exercism{ .name = "leap" },
+    Exercism{ .name = "difference-of-squares" },
+    Exercism{ .name = "scrabble-score" },
+    Exercism{ .name = "pangram" },
+    Exercism{ .name = "armstrong-numbers" },
+    Exercism{ .name = "isogram" },
+    Exercism{ .name = "hamming" },
+    Exercism{ .name = "grains" },
+    Exercism{ .name = "isbn-verifier" },
+    Exercism{ .name = "resistor-color" },
+    Exercism{ .name = "resistor-color-duo" },
+    Exercism{ .name = "luhn" },
+    Exercism{ .name = "darts" },
 };
 
 const BuildOptions = struct {
@@ -65,17 +70,4 @@ fn addNewExercismExe(b: *std.Build, build_options: BuildOptions) void {
 
     const run = b.step("new-exercism", "Add new exercism");
     run.dependOn(&cmd.step);
-}
-
-/// Makes slice with capacity, enough to hold all items in iterator.
-/// Resets iter.
-fn sliceFromIter(comptime T: type, iter: anytype) []T {
-    iter.reset();
-
-    var i: usize = 0;
-    inline while (iter.next()) |_| : (i += 1) {}
-    iter.reset();
-
-    var res: [i]T = undefined;
-    return &res; // I guess it's safe to return variable on stack in comptime fn?
 }
