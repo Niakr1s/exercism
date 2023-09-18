@@ -1,4 +1,5 @@
 const std = @import("std");
+const cwd = std.fs.cwd;
 
 /// Filepath with exercism list
 const exercism_txt_path = "exercisms/exercisms.txt";
@@ -39,7 +40,7 @@ fn onSuccess(exercism_name: []const u8) void {
 
 /// Deprecated, not used anymore
 fn appendExercismName(exercism_name: []const u8) !void {
-    var exercism_txt_f = std.fs.cwd().openFile(exercism_txt_path, .{ .mode = .write_only }) catch try std.fs.cwd().createFile(exercism_txt_path, .{});
+    var exercism_txt_f = cwd().openFile(exercism_txt_path, .{ .mode = .write_only }) catch try std.fs.cwd().createFile(exercism_txt_path, .{});
     defer exercism_txt_f.close();
 
     try exercism_txt_f.seekFromEnd(0);
@@ -51,17 +52,16 @@ fn initExercismDir(allocator: std.mem.Allocator, exercism_name: []const u8) !voi
     const dir_path = try std.fmt.allocPrint(allocator, "exercisms/{s}", .{exercism_name});
     defer allocator.free(dir_path);
 
-    try std.fs.cwd().makePath(dir_path);
+    try cwd().makePath(dir_path);
 
     const zig_path = try std.fmt.allocPrint(allocator, "{s}/{s}.zig", .{ dir_path, exercism_name });
     defer allocator.free(zig_path);
 
-    if (std.fs.cwd().openFile(zig_path, .{})) |f| {
-        defer f.close();
+    if (cwd().statFile(zig_path)) |_| {
         return error.PathAlreadyExists;
     } else |_| {}
 
-    const zig_f = try std.fs.cwd().createFile(zig_path, .{});
+    const zig_f = try cwd().createFile(zig_path, .{});
     defer zig_f.close();
 
     try zig_f.writeAll(contents);
