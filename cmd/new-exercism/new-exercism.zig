@@ -24,7 +24,7 @@ pub fn main() !void {
 }
 
 fn onSuccess(exercism_name: []const u8) void {
-    std.debug.print("\nCreated new exercism {s}!\n", .{exercism_name});
+    std.debug.print("Created new exercism {s}!\n", .{exercism_name});
 }
 
 /// Deprecated, not used anymore
