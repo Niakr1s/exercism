@@ -38,7 +38,10 @@ fn addTests(b: *std.Build, build_options: BuildOptions) !void {
     while (try exercism_dir_iter.next()) |item| {
         if (item.kind == .directory) {
             const name: []const u8 = item.name;
+
             const path = try std.fmt.allocPrint(b.allocator, "{0s}/{1s}/{1s}.zig", .{ dir_path, name });
+            defer b.allocator.free(path);
+
             if (cwd.statFile(path)) |_| {
                 const compile = b.addTest(.{
                     .root_source_file = .{ .path = path },
