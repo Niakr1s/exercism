@@ -48,11 +48,11 @@ fn addTests(b: *std.Build, build_options: BuildOptions) !void {
                     .target = build_options.target,
                     .optimize = build_options.optimize,
                 });
-                std.debug.print("[  OK] [Exercism]   Added: '{s}'\n", .{path});
+                std.debug.print("[  OK] [test]  Added: '{s}'\n", .{path});
                 const cmd = b.addRunArtifact(compile);
                 run.dependOn(&cmd.step);
             } else |_| {
-                std.debug.print("[FAIL] [Exercism] Missing: '{s}'\n", .{path});
+                std.debug.print("[FAIL] [test] Missing: '{s}'\n", .{path});
             }
         }
     }
@@ -66,6 +66,8 @@ fn addNewExercismExe(b: *std.Build, build_options: BuildOptions) void {
         .optimize = build_options.optimize,
     });
     b.installArtifact(compile);
+    std.debug.print("[  OK] [new-exercism] Built\n", .{});
+
     const cmd = b.addRunArtifact(compile);
     if (b.args != null) cmd.addArgs(b.args.?);
 
