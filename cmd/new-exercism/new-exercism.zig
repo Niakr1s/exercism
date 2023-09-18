@@ -17,6 +17,7 @@ pub fn main() !void {
 
     errdefer Args.printUsage();
     var args = try Args.parseArgs(allocator);
+    defer args.free(allocator);
 
     try initExercismDir(allocator, args.name);
 
@@ -59,7 +60,7 @@ fn initExercismDir(allocator: std.mem.Allocator, exercism_name: []const u8) !voi
 const Args = struct {
     name: []const u8,
 
-    const ParseArgsError = error{NoNameProvided};
+    const ParseArgsError = error{ NoNameProvided, OutOfMemory };
 
     /// Parses args. Consumes iter.
     pub fn parseArgs(allocator: std.mem.Allocator) ParseArgsError!Args {
@@ -67,8 +68,13 @@ const Args = struct {
         defer args_iter.deinit();
 
         _ = args_iter.skip();
-        const name = args_iter.next() orelse return ParseArgsError.NoNameProvided;
+        var name = args_iter.next() orelse return ParseArgsError.NoNameProvided;
+        name = try allocator.dupeZ(u8, name);
         return Args{ .name = name };
+    }
+
+    pub fn free(self: Args, allocator: std.mem.Allocator) void {
+        allocator.free(self.name);
     }
 
     pub fn printUsage() void {
