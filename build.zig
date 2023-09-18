@@ -11,49 +11,47 @@ const Exercism = struct {
     }
 };
 
-const exercisms = [_]Exercism{
-    Exercism{ .name = "collatz-conjecture" },
-    Exercism{ .name = "leap" },
-    Exercism{ .name = "difference-of-squares" },
-    Exercism{ .name = "scrabble-score" },
-    Exercism{ .name = "pangram" },
-    Exercism{ .name = "armstrong-numbers" },
-    Exercism{ .name = "isogram" },
-    Exercism{ .name = "hamming" },
-    Exercism{ .name = "grains" },
-    Exercism{ .name = "isbn-verifier" },
-    Exercism{ .name = "resistor-color" },
-    Exercism{ .name = "resistor-color-duo" },
-    Exercism{ .name = "luhn" },
-    Exercism{ .name = "darts" },
-};
-
 const BuildOptions = struct {
     target: std.zig.CrossTarget,
     optimize: std.builtin.Mode,
 };
 
-pub fn build(b: *std.Build) void {
+pub fn build(b: *std.Build) !void {
     const build_options = BuildOptions{
         .target = b.standardTargetOptions(.{}),
         .optimize = b.standardOptimizeOption(.{}),
     };
 
-    addTests(b, build_options);
+    try addTests(b, build_options);
     addNewExercismExe(b, build_options);
 }
 
-fn addTests(b: *std.Build, build_options: BuildOptions) void {
+fn addTests(b: *std.Build, build_options: BuildOptions) !void {
     const run = b.step("test", "Run tests");
-    inline for (exercisms, 1..) |e, i| {
-        std.debug.print("[{d:3}] added exercism '{s}'\n", .{ i, e.name });
-        const compile = b.addTest(.{
-            .root_source_file = .{ .path = e.getRootSourceFile() },
-            .target = build_options.target,
-            .optimize = build_options.optimize,
-        });
-        const cmd = b.addRunArtifact(compile);
-        run.dependOn(&cmd.step);
+
+    const dir_path = "exercisms";
+    const cwd = std.fs.cwd();
+    try cwd.makePath(dir_path);
+    var exercism_dir = try cwd.openIterableDir(dir_path, .{});
+    var exercism_dir_iter = exercism_dir.iterate();
+
+    while (try exercism_dir_iter.next()) |item| {
+        if (item.kind == .directory) {
+            const name: []const u8 = item.name;
+            const path = try std.fmt.allocPrint(b.allocator, "{0s}/{1s}/{1s}.zig", .{ dir_path, name });
+            if (cwd.statFile(path)) |_| {
+                const compile = b.addTest(.{
+                    .root_source_file = .{ .path = path },
+                    .target = build_options.target,
+                    .optimize = build_options.optimize,
+                });
+                std.debug.print("[  OK] [Exercism]   Added: '{s}'\n", .{path});
+                const cmd = b.addRunArtifact(compile);
+                run.dependOn(&cmd.step);
+            } else |_| {
+                std.debug.print("[FAIL] [Exercism] Missing: '{s}'\n", .{path});
+            }
+        }
     }
 }
 
