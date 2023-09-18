@@ -39,32 +39,32 @@ pub fn build(b: *std.Build) void {
 }
 
 fn addTests(b: *std.Build, build_options: BuildOptions) void {
-    const test_step = b.step("test", "Run tests");
+    const run = b.step("test", "Run tests");
     inline for (exercisms, 1..) |e, i| {
         std.debug.print("[{d:3}] added exercism '{s}'\n", .{ i, e.name });
-        const t = b.addTest(.{
+        const compile = b.addTest(.{
             .root_source_file = .{ .path = e.getRootSourceFile() },
             .target = build_options.target,
             .optimize = build_options.optimize,
         });
-        const t_run = b.addRunArtifact(t);
-        test_step.dependOn(&t_run.step);
+        const cmd = b.addRunArtifact(compile);
+        run.dependOn(&cmd.step);
     }
 }
 
 fn addNewExercismExe(b: *std.Build, build_options: BuildOptions) void {
-    const exe = b.addExecutable(.{
+    const compile = b.addExecutable(.{
         .name = "new-exercism",
         .root_source_file = .{ .path = "cmd/new-exercism/new-exercism.zig" },
         .target = build_options.target,
         .optimize = build_options.optimize,
     });
-    b.installArtifact(exe);
-    const run = b.addRunArtifact(exe);
-    if (b.args != null) run.addArgs(b.args.?);
+    b.installArtifact(compile);
+    const cmd = b.addRunArtifact(compile);
+    if (b.args != null) cmd.addArgs(b.args.?);
 
-    const step = b.step("new-exercism", "Add new exercism");
-    step.dependOn(&run.step);
+    const run = b.step("new-exercism", "Add new exercism");
+    run.dependOn(&cmd.step);
 }
 
 /// Makes slice with capacity, enough to hold all items in iterator.
