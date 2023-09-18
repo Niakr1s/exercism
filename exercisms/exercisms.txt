@@ -11,3 +11,4 @@ isbn-verifier
 resistor-color
 resistor-color-duo
 luhn
+darts
