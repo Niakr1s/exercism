@@ -24,19 +24,7 @@ pub fn main() !void {
 }
 
 fn onSuccess(exercism_name: []const u8) void {
-    std.debug.print(
-        \\
-        \\Created new exercism {0s}!
-        \\
-        \\Don't forget to add it in build.zig under 'exercisms' constant:
-        \\
-        \\const exercisms = [_]Exercism{{
-        \\    ...
-        \\    Exercism{{ .name = "{0s}" }},
-        \\    ...
-        \\}};
-        \\
-    , .{exercism_name});
+    std.debug.print("\nCreated new exercism {s}!\n", .{exercism_name});
 }
 
 /// Deprecated, not used anymore
