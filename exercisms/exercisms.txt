@@ -1,0 +1,13 @@
+collatz-conjecture
+leap
+difference-of-squares
+scrabble-score
+pangram
+armstrong-numbers
+isogram
+hamming
+grains
+isbn-verifier
+resistor-color
+resistor-color-duo
+luhn
