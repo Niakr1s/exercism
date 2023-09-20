@@ -6,8 +6,12 @@ const exercism_txt_path = "exercisms/exercisms.txt";
 
 const contents =
     \\const std = @import("std");
+    \\
+    \\// your code here
+    \\
     \\const testing = std.testing;
     \\
+    \\// your tests here
 ;
 
 pub fn main() !void {
