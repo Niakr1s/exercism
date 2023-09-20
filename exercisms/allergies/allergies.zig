@@ -21,7 +21,7 @@ pub fn isAllergicTo(score: u8, allergen: Allergen) bool {
 pub fn initAllergenSet(score: usize) EnumSet(Allergen) {
     var set = EnumSet(Allergen).initEmpty();
     for (allergens) |allergen| {
-        if (@intFromEnum(allergen) & score != 0) set.insert(allergen);
+        if (isAllergicTo(@truncate(score), allergen)) set.insert(allergen);
     }
     return set;
 }
