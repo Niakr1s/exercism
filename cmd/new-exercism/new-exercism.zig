@@ -64,7 +64,7 @@ const Args = struct {
 
     /// Parses args. Consumes iter.
     pub fn parseArgs(allocator: std.mem.Allocator) ParseArgsError!Args {
-        var args_iter = try std.process.argsWithAllocator(allocator);
+        var args_iter = std.process.argsWithAllocator(allocator) catch return ParseArgsError.OutOfMemory;
         defer args_iter.deinit();
 
         _ = args_iter.skip();
